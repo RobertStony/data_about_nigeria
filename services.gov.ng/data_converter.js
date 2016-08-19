@@ -20,7 +20,6 @@ function insertIntoDataObject (key, values, dataObject) {
     })
   } else if (values.length === 1) {
     dataObject[key] = values[0]
-  } else {
   }
 }
 
