@@ -1,6 +1,8 @@
 var DatabaseUtility = require('./database_utility.js')
 var osmGhana = require('./overpass-turbo.eu/index.js')
 var graduates = require('./graduates.com/index.js')
+var health = require('./health.gov.ng/index.js')
+var servicesGov = require('./services.gov.ng/index.js')
 var entityResolution = require('./entity_resolution.js')
 
 var model = {
@@ -56,7 +58,15 @@ function prepareDatabase () {
 }
 
 function runScrapers () {
-  osmGhana.run(db, runGraduates)
+  osmGhana.run(db, runServicesGov)
+}
+
+function runServicesGov () {
+  servicesGov.run(db, runHealth)
+}
+
+function runHealth () {
+  health.run(db, runGraduates)
 }
 
 function runGraduates () {
