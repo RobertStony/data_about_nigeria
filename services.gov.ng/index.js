@@ -57,6 +57,7 @@ function run (db, callbackScraper) {
 
       var databaseObject = {}
 
+      databaseObject['type'] = 'Government Institutions'
       databaseObject['name'] = $('h2').eq(0).text().trim()
 
       var information = $('#bodytext').children('ul').children('li')
