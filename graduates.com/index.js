@@ -20,25 +20,25 @@ function run (db, callbackScraper) {
 
   function getStates (body) {
     var $ = whacko.load(body)
+
     var states = []
 
-    var districtLinks = $('.col-lg-12').children('ul').eq(1).children('li')
-
-    districtLinks.each(function () {
+    $('.col-lg-12').children('ul').eq(1).children('li').each(function () {
       states.push('http://www.graduates.com/' + $(this).children('a').attr('href'))
     })
 
     $ = undefined
 
     states.forEach(function (link) {
-      getDistricts(link)
+      getCities(link)
     })
   }
 
-  function getDistricts (link) {
+  function getCities (link) {
     fetchPage(link, function (body) {
-      var cities = []
       var $ = whacko.load(body)
+
+      var cities = []
 
       $('.col-lg-12').children('ul').eq(1).children('li').each(function () {
         cities.push('http://www.graduates.com/' + $(this).children('a').attr('href'))
@@ -46,14 +46,11 @@ function run (db, callbackScraper) {
 
       $ = undefined
 
-      numberOfPages += cities.length
-
       cities.forEach(function (link) {
         counter += policy
         setTimeout(function getPage () {
           console.log('graduates.com - Get Page: ' + link)
           getSchools(link)
-          numberOfPages -= 1
         }, counter)
       })
     })
@@ -61,8 +58,9 @@ function run (db, callbackScraper) {
 
   function getSchools (link) {
     fetchPage(link, function (body) {
-      var schools = []
       var $ = whacko.load(body)
+
+      var schools = []
 
       $('ul').children('li').each(function () {
         if (String($(this).children('a').attr('href')).includes('/ss/')) {
@@ -79,12 +77,6 @@ function run (db, callbackScraper) {
         setTimeout(function getPage () {
           console.log('graduates.com - Get Page: ' + link)
           getSchoolInfo(link)
-          numberOfPages -= 1
-          if (numberOfPages === 0) {
-            if (typeof callbackScraper === 'function') {
-              callbackScraper()
-            }
-          }
         }, counter)
       })
     })
@@ -146,6 +138,13 @@ function run (db, callbackScraper) {
       }, {})
 
       db.insertRow(dataObject)
+
+      numberOfPages -= 1
+      if (numberOfPages === 0) {
+        if (typeof callbackScraper === 'function') {
+          callbackScraper()
+        }
+      }
     })
   }
 }

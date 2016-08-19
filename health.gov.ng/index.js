@@ -3,6 +3,7 @@ var request = require('request')
 
 function run (db, callbackScraper) {
   console.log('health.gov.ng - http://www.health.gov.ng/index.php/parastatals')
+
   fetchPage('http://www.health.gov.ng/index.php/parastatals', getHospitals)
 
   function fetchPage (url, callback) {
@@ -27,14 +28,16 @@ function run (db, callbackScraper) {
         databaseObject['city'] = $(this).children('td').eq(2).children('p').text().trim()
         databaseObject['region'] = $(this).children('td').eq(3).children('p').text().trim()
         databaseObject['type'] = 'hospital'
-        console.log(databaseObject)
+
         db.insertRow(databaseObject)
       }
     })
+
+    $ = undefined
+
     if (typeof callbackScraper === 'function') {
       callbackScraper()
     }
-    $ = undefined
   }
 }
 

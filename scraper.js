@@ -70,7 +70,7 @@ function runHealth () {
 }
 
 function runGraduates () {
-  graduates.run(db, runEntityResolution)
+  graduates.run(db)
 }
 
 function runEntityResolution () {

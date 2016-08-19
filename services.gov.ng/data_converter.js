@@ -8,8 +8,9 @@ DataConverter.prototype.convertTelephone = function (value, dataObject) {
   })
 
   if (telephones.length !== 0) {
-    insertIntoDataObject('telephone', telephones, dataObject)
+    dataObject = insertIntoDataObject('telephone', telephones, dataObject)
   }
+  return dataObject
 }
 
 function insertIntoDataObject (key, values, dataObject) {
@@ -21,6 +22,7 @@ function insertIntoDataObject (key, values, dataObject) {
   } else if (values.length === 1) {
     dataObject[key] = values[0]
   }
+  return dataObject
 }
 
 function getOrElse (value, elseValue) {

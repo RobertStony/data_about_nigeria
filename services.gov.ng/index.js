@@ -6,9 +6,8 @@ function run (db, callbackScraper) {
   var counter = 0
   var policy = 1000
   var numberOfPages = 0
-  var scrapedPages = 0
 
-  fetchPage('http://services.gov.ng/agencies', getAgencies, callbackScraper)
+  fetchPage('http://services.gov.ng/agencies', getAgencies)
 
   function fetchPage (url, callback) {
     request(url, function (error, response, body) {
@@ -17,7 +16,7 @@ function run (db, callbackScraper) {
         return
       }
 
-      callback(body, callbackScraper)
+      callback(body)
     })
   }
 
@@ -34,19 +33,11 @@ function run (db, callbackScraper) {
 
     $ = undefined
 
-    console.log(agencies)
-
     agencies.forEach(function (link) {
       counter += policy
       setTimeout(function () {
         console.log('services.gov.ng - Get Page: ' + link)
         getAgencyInformation(link)
-        scrapedPages += 1
-        if (scrapedPages === numberOfPages) {
-          if (typeof callbackScraper === 'function') {
-            callbackScraper()
-          }
-        }
       }, counter)
     })
   }
@@ -78,14 +69,24 @@ function run (db, callbackScraper) {
         if (key === 'address') {
           databaseObject['address'] = content[1]
         } else if (key === 'telephone') {
-          dataConverter.convertTelephone(content[1], databaseObject)
+          databaseObject = dataConverter.convertTelephone(content[1], databaseObject)
         } else if (key === 'website') {
           databaseObject['website'] = content[1]
         }
       })
-      db.insertRow(databaseObject)
+
       $ = undefined
+
+      db.insertRow(databaseObject)
+
+      numberOfPages -= 1
+      if (numberOfPages === 0) {
+        if (typeof callbackScraper === 'function') {
+          callbackScraper()
+        }
+      }
     })
   }
 }
+
 module.exports.run = run
